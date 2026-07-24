@@ -1,0 +1,25 @@
+[Unit]
+Description=Glances web/API agent (workstation vitals)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Flags are -B/-p, NOT --bind/--port: argparse accepts the long spellings as
+# abbreviations of unrelated options and then never starts the listener.
+#
+# The disabled plugins are the expensive ones. With them off, /api/4/all is a
+# few KB, so a client can read the entire machine in ONE request per poll
+# instead of six. That matters: a single-worker uvicorn accumulated 15
+# CLOSE-WAIT sockets under six-requests-every-three-seconds and wedged
+# completely, refusing even 127.0.0.1.
+ExecStart=%h/.local/share/glances-venv/bin/glances -w -B 0.0.0.0 -p 61208 -t 2 \
+    --disable-plugin processlist,programlist,containers,ports,amps,folders,alert,irq,percpu,diskio,quicklook,sensors,gpu,wifi,raid,smart,ip,now,help
+Restart=always
+RestartSec=5
+# Metrics collection must never be what starves the box it is measuring.
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=default.target
