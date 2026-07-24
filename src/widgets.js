@@ -30,13 +30,13 @@ const HISTORY = 60;
 export const Figure = GObject.registerClass(
 class Figure extends St.BoxLayout {
     _init() {
-        super._init({style_class: 'wsm-figure', y_align: Clutter.ActorAlign.CENTER});
+        super._init({style_class: 'sg-figure', y_align: Clutter.ActorAlign.CENTER});
         this._value = new St.Label({
-            style_class: 'wsm-figure-value',
+            style_class: 'sg-figure-value',
             y_align: Clutter.ActorAlign.CENTER,
         });
         this._unit = new St.Label({
-            style_class: 'wsm-figure-unit',
+            style_class: 'sg-figure-unit',
             y_align: Clutter.ActorAlign.CENTER,
         });
         this.add_child(this._value);
@@ -49,10 +49,10 @@ class Figure extends St.BoxLayout {
         this._unit.text = unit;
         this._unit.visible = !!unit;
         if (tight)
-            this._unit.add_style_class_name('wsm-figure-unit-tight');
+            this._unit.add_style_class_name('sg-figure-unit-tight');
         else
-            this._unit.remove_style_class_name('wsm-figure-unit-tight');
-        for (const c of ['wsm-warn', 'wsm-crit'])
+            this._unit.remove_style_class_name('sg-figure-unit-tight');
+        for (const c of ['sg-warn', 'sg-crit'])
             this._value.remove_style_class_name(c);
         if (severityClass)
             this._value.add_style_class_name(severityClass);
@@ -70,11 +70,11 @@ class Figure extends St.BoxLayout {
 export const Bar = GObject.registerClass(
 class Bar extends St.BoxLayout {
     _init(width = CONTENT_WIDTH) {
-        super._init({style_class: 'wsm-bar-track', x_align: Clutter.ActorAlign.START});
+        super._init({style_class: 'sg-bar-track', x_align: Clutter.ActorAlign.START});
         this._width = width;
         this.set_style(`width: ${width}px;`);
         this._fill = new St.Widget({
-            style_class: 'wsm-bar-fill',
+            style_class: 'sg-bar-fill',
             x_align: Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.FILL,
         });
@@ -90,7 +90,7 @@ class Bar extends St.BoxLayout {
             px = Math.max(2, px);
         this._fill.set_style(`width: ${px}px;`);
         this._fill.visible = px > 0;
-        for (const c of ['wsm-warn', 'wsm-crit'])
+        for (const c of ['sg-warn', 'sg-crit'])
             this._fill.remove_style_class_name(c);
         if (severityClass)
             this._fill.add_style_class_name(severityClass);
@@ -105,7 +105,7 @@ class Bar extends St.BoxLayout {
 export const Sparkline = GObject.registerClass(
 class Sparkline extends St.DrawingArea {
     _init(capacity = HISTORY, width = CONTENT_WIDTH, height = SPARK_HEIGHT) {
-        super._init({style_class: 'wsm-spark'});
+        super._init({style_class: 'sg-spark'});
         this._values = [];
         this._capacity = capacity;
         this.set_style(`width: ${width}px; height: ${height}px;`);
@@ -144,12 +144,12 @@ class Sparkline extends St.DrawingArea {
 export const StatBlock = GObject.registerClass(
 class StatBlock extends St.BoxLayout {
     _init(name, {sparkline = false} = {}) {
-        super._init({style_class: 'wsm-block', vertical: true});
+        super._init({style_class: 'sg-block', vertical: true});
 
-        const head = new St.BoxLayout({style_class: 'wsm-block-head'});
+        const head = new St.BoxLayout({style_class: 'sg-block-head'});
         this._name = new St.Label({
             text: name,
-            style_class: 'wsm-block-name',
+            style_class: 'sg-block-name',
             x_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
         });
@@ -165,10 +165,10 @@ class StatBlock extends St.BoxLayout {
         this._bar = new Bar();
         this.add_child(this._bar);
 
-        this._detail = new St.Label({style_class: 'wsm-block-detail'});
+        this._detail = new St.Label({style_class: 'sg-block-detail'});
         this.add_child(this._detail);
 
-        this._sub = new St.Label({style_class: 'wsm-block-sub'});
+        this._sub = new St.Label({style_class: 'sg-block-sub'});
         this.add_child(this._sub);
     }
 
@@ -199,16 +199,16 @@ class StatBlock extends St.BoxLayout {
 export const KeyValue = GObject.registerClass(
 class KeyValue extends St.BoxLayout {
     _init(name) {
-        super._init({style_class: 'wsm-kv'});
+        super._init({style_class: 'sg-kv'});
         this._key = new St.Label({
             text: name,
-            style_class: 'wsm-kv-key',
+            style_class: 'sg-kv-key',
             x_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
         });
         this._value = new St.Label({
             text: '--',
-            style_class: 'wsm-kv-val',
+            style_class: 'sg-kv-val',
             y_align: Clutter.ActorAlign.CENTER,
         });
         this.add_child(this._key);
@@ -221,7 +221,7 @@ class KeyValue extends St.BoxLayout {
 
     set(text, severityClass = '') {
         this._value.text = text;
-        for (const c of ['wsm-warn', 'wsm-crit'])
+        for (const c of ['sg-warn', 'sg-crit'])
             this._value.remove_style_class_name(c);
         if (severityClass)
             this._value.add_style_class_name(severityClass);
@@ -231,5 +231,5 @@ class KeyValue extends St.BoxLayout {
 /* ── hairline ────────────────────────────────────────────────────────────── */
 
 export function hairline() {
-    return new St.Widget({style_class: 'wsm-hairline'});
+    return new St.Widget({style_class: 'sg-hairline'});
 }

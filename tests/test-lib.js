@@ -19,10 +19,16 @@ import {
     readDisk, readLoad, readMem, readNetCounters, readTemp, readUptime, severity,
 } from '../src/lib.js';
 
-const BASE = ARGV[0] ?? GLib.getenv('WSM_TEST_HOST') ?? 'http://127.0.0.1:61208/api/4';
+// The live half is opt-in: it needs a Glances agent, which a fresh clone has no
+// reason to have. Point it at one explicitly and it runs; otherwise it is
+// reported as skipped rather than failed, so `make test` is green on checkout.
+//   gjs -m test-lib.js http://host:61208/api/4
+//   make test-lib SPYGLASS_TEST_HOST=http://host:61208/api/4
+const BASE = ARGV[0] || GLib.getenv('SPYGLASS_TEST_HOST') || '';
 
 let failures = 0;
 let checks = 0;
+let skipped = 0;
 
 function check(name, condition, detail = '') {
     checks++;
@@ -38,9 +44,9 @@ check('pct pads single digits', pct(6) === ' 6%', `"${pct(6)}"`);
 check('pct handles 100', pct(100) === '100%');
 check('pct handles null', pct(null) === ' --%');
 check('severity clean below warn', severity(50) === '');
-check('severity warns at 85', severity(85) === 'wsm-warn');
-check('severity crits at 95', severity(95) === 'wsm-crit');
-check('severity honours custom bounds', severity(50, 40, 75) === 'wsm-warn');
+check('severity warns at 85', severity(85) === 'sg-warn');
+check('severity crits at 95', severity(95) === 'sg-crit');
+check('severity honours custom bounds', severity(50, 40, 75) === 'sg-warn');
 
 check('fmtBytes GiB', fmtBytes(33699287040).value === '31.4', JSON.stringify(fmtBytes(33699287040)));
 check('fmtBytes GiB unit', fmtBytes(33699287040).unit === 'GiB');
@@ -179,7 +185,15 @@ function runRemote() {
     check('remote kind', shaped.kind === 'remote');
     check('remote has no gpu', shaped.gpu === null);
 
-    print('\n── remote live (real HTTP to the workstation) ──────────');
+    print('\n── remote live (real HTTP against an agent) ────────────');
+    if (!BASE) {
+        skipped++;
+        print('skip  no agent given; pass a base URL or set SPYGLASS_TEST_HOST');
+        print(`\n${failures === 0 ? `ALL ${checks} CHECKS PASS` : `${failures} of ${checks} FAILED`}` +
+            `${skipped ? `  (${skipped} section skipped)` : ''}`);
+        loop.quit();
+        return;
+    }
     const session = new Soup.Session({timeout: 6});
     const cancellable = new Gio.Cancellable();
 

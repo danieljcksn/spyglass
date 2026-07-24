@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.workstation-monitor"
-          path="/org/gnome/shell/extensions/workstation-monitor/">
+  <schema id="org.gnome.shell.extensions.spyglass"
+          path="/org/gnome/shell/extensions/spyglass/">
 
     <key name="source" type="s">
       <default>'local'</default>

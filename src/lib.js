@@ -39,9 +39,9 @@ export function severity(v, warn = WARN, crit = CRIT) {
     if (v === null || v === undefined || Number.isNaN(v))
         return '';
     if (v >= crit)
-        return 'wsm-crit';
+        return 'sg-crit';
     if (v >= warn)
-        return 'wsm-warn';
+        return 'sg-warn';
     return '';
 }
 
@@ -414,6 +414,11 @@ export function buildLocalData(prev = {}) {
 
 export async function fetchJson(session, url, cancellable) {
     const msg = Soup.Message.new('GET', url);
+    // Soup returns null rather than throwing when the URL will not parse, and
+    // the failure then surfaces from deep inside GObject as "Argument msg may
+    // not be null", which says nothing about the address that caused it.
+    if (!msg)
+        throw new Error(`Malformed URL: ${url}`);
     const bytes = await session.send_and_read_async(msg, GLib.PRIORITY_DEFAULT, cancellable);
     if (msg.get_status() !== Soup.Status.OK)
         throw new Error(`HTTP ${msg.get_status()} for ${url}`);
@@ -464,7 +469,7 @@ export function buildRemoteData({cpu, mem, memswap, fs, network, load, uptime, p
         // says everything twice.
         auxLabel: 'iowait · steal',
         auxDetail: `${io.toFixed(1)}%   ·   ${steal.toFixed(1)}%`,
-        auxSeverity: steal >= 10 || io >= 40 ? 'wsm-crit' : steal >= 3 || io >= 20 ? 'wsm-warn' : '',
+        auxSeverity: steal >= 10 || io >= 40 ? 'sg-crit' : steal >= 3 || io >= 20 ? 'sg-warn' : '',
         temp: null,
         mem: mem
             ? {

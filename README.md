@@ -1,4 +1,4 @@
-# Workstation Monitor
+# Spyglass
 
 A GNOME Shell panel indicator that shows CPU, memory, disk, GPU and network for
 **this** machine, and switches to a **remote** machine on a click.
@@ -119,11 +119,11 @@ agent/     systemd unit for the remote Glances agent
 The layering exists so the parts that can be checked, are:
 
 ```sh
-make test-lib     # 84 checks: real /proc, real nvidia-smi, real HTTP
+make test-lib     # real /proc, real nvidia-smi; add a host for the remote half
 make test-draw    # renders build/sparklines.png so the graph can be LOOKED at
 ```
 
-`test-lib` covers invariants worth having, like `used + available == total` and
+The live-HTTP half is opt-in and skips cleanly without an agent. `test-lib` covers invariants worth having, like `used + available == total` and
 that interface selection skips `lo` and `docker0`. `test-draw` renders the
 sparkline across its whole range — idle, pegged, spiky, partial history, two
 samples, empty — because a graph is the one thing whose correctness cannot be
@@ -132,7 +132,7 @@ asserted from a number.
 Point the live-HTTP half at a real agent:
 
 ```sh
-make test-lib WSM_TEST_HOST=http://192.168.0.81:61208/api/4
+make test-lib SPYGLASS_TEST_HOST=http://192.168.0.81:61208/api/4
 ```
 
 ## Design

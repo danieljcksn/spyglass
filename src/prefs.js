@@ -4,7 +4,7 @@ import Gtk from 'gi://Gtk';
 
 import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-export default class WorkstationMonitorPrefs extends ExtensionPreferences {
+export default class SpyglassPrefs extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const settings = this.getSettings();
         const page = new Adw.PreferencesPage({

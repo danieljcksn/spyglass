@@ -1,4 +1,4 @@
-// Workstation Monitor
+// Spyglass
 //
 // One button in the top bar. Left click toggles which machine it reports on:
 //
@@ -40,10 +40,10 @@ import {StatBlock, KeyValue, hairline} from './widgets.js';
 
 const PANEL_FIELDS = ['cpu', 'aux', 'ram', 'disk', 'gpu', 'net'];
 
-const WorkstationIndicator = GObject.registerClass(
-class WorkstationIndicator extends PanelMenu.Button {
+const SpyglassIndicator = GObject.registerClass(
+class SpyglassIndicator extends PanelMenu.Button {
     _init(extension) {
-        super._init(0.5, 'Workstation Monitor', false);
+        super._init(0.5, 'Spyglass', false);
 
         this._extension = extension;
         this._settings = extension.getSettings();
@@ -96,20 +96,20 @@ class WorkstationIndicator extends PanelMenu.Button {
 
     _buildPanel() {
         this._pill = new St.BoxLayout({
-            style_class: 'wsm-pill',
+            style_class: 'sg-pill',
             y_align: Clutter.ActorAlign.CENTER,
         });
 
-        this._icon = new St.Icon({style_class: 'wsm-icon', y_align: Clutter.ActorAlign.CENTER});
+        this._icon = new St.Icon({style_class: 'sg-icon', y_align: Clutter.ActorAlign.CENTER});
         this._pill.add_child(this._icon);
 
-        this._tag = new St.Label({style_class: 'wsm-tag', y_align: Clutter.ActorAlign.CENTER});
+        this._tag = new St.Label({style_class: 'sg-tag', y_align: Clutter.ActorAlign.CENTER});
         this._pill.add_child(this._tag);
 
         this._fields = {};
         for (const key of PANEL_FIELDS) {
             const label = new St.Label({
-                style_class: 'wsm-metric',
+                style_class: 'sg-metric',
                 y_align: Clutter.ActorAlign.CENTER,
             });
             this._fields[key] = label;
@@ -136,18 +136,18 @@ class WorkstationIndicator extends PanelMenu.Button {
         // gnome-shell's default indent and sit a few pixels left of every label
         // in the readout, which is exactly the kind of near-miss that makes a
         // menu feel assembled rather than designed.
-        this.menu.box.add_style_class_name('wsm-menu');
+        this.menu.box.add_style_class_name('sg-menu');
 
         const section = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
-        section.style_class = 'wsm-menu-section';
-        const body = new St.BoxLayout({vertical: true, style_class: 'wsm-body'});
+        section.style_class = 'sg-menu-section';
+        const body = new St.BoxLayout({vertical: true, style_class: 'sg-body'});
         section.add_child(body);
         this.menu.addMenuItem(section);
 
-        const header = new St.BoxLayout({style_class: 'wsm-header'});
+        const header = new St.BoxLayout({style_class: 'sg-header'});
         const titles = new St.BoxLayout({vertical: true, x_expand: true});
-        this._hostLabel = new St.Label({text: '', style_class: 'wsm-host'});
-        this._subLabel = new St.Label({text: '', style_class: 'wsm-hostsub'});
+        this._hostLabel = new St.Label({text: '', style_class: 'sg-host'});
+        this._subLabel = new St.Label({text: '', style_class: 'sg-hostsub'});
         titles.add_child(this._hostLabel);
         titles.add_child(this._subLabel);
         header.add_child(titles);
@@ -156,7 +156,7 @@ class WorkstationIndicator extends PanelMenu.Button {
         // sitting on the hostname it qualifies.
         this._chip = new St.Label({
             text: '',
-            style_class: 'wsm-chip',
+            style_class: 'sg-chip',
             y_align: Clutter.ActorAlign.START,
         });
         header.add_child(this._chip);
@@ -216,9 +216,9 @@ class WorkstationIndicator extends PanelMenu.Button {
             try {
                 const p = this._extension.openPreferences();
                 if (p?.catch)
-                    p.catch(e => logError(e, 'workstation-monitor: openPreferences'));
+                    p.catch(e => logError(e, 'spyglass: openPreferences'));
             } catch (e) {
-                logError(e, 'workstation-monitor: openPreferences');
+                logError(e, 'spyglass: openPreferences');
             }
         });
         this.menu.addMenuItem(prefsItem);
@@ -265,13 +265,13 @@ class WorkstationIndicator extends PanelMenu.Button {
         const remote = this._isRemote;
         const localName = GLib.get_host_name().toLowerCase();
         const remoteName = this._settings.get_string('remote-label');
-        this._pill.remove_style_class_name(remote ? 'wsm-local' : 'wsm-remote');
-        this._pill.add_style_class_name(remote ? 'wsm-remote' : 'wsm-local');
+        this._pill.remove_style_class_name(remote ? 'sg-local' : 'sg-remote');
+        this._pill.add_style_class_name(remote ? 'sg-remote' : 'sg-local');
         this._icon.icon_name = remote ? 'network-server-symbolic' : 'computer-symbolic';
         this._tag.text = remote ? remoteName : localName;
         this._chip.text = remote ? 'remote' : 'this machine';
-        this._chip.remove_style_class_name(remote ? 'wsm-chip-local' : 'wsm-chip-remote');
-        this._chip.add_style_class_name(remote ? 'wsm-chip-remote' : 'wsm-chip-local');
+        this._chip.remove_style_class_name(remote ? 'sg-chip-local' : 'sg-chip-remote');
+        this._chip.add_style_class_name(remote ? 'sg-chip-remote' : 'sg-chip-local');
         this._switchItem.label.text = `Switch to ${remote ? localName : remoteName}`;
         this._dashItem.visible = remote;
     }
@@ -375,7 +375,7 @@ class WorkstationIndicator extends PanelMenu.Button {
         // min-width, which left a run of dead space inside the pill whenever a
         // metric was unavailable.
         label.visible = this._fieldEnabled(key) && !!text;
-        for (const c of ['wsm-warn', 'wsm-crit'])
+        for (const c of ['sg-warn', 'sg-crit'])
             label.remove_style_class_name(c);
         if (sev)
             label.add_style_class_name(sev);
@@ -383,21 +383,21 @@ class WorkstationIndicator extends PanelMenu.Button {
 
     _renderPanel(data) {
         if (!data) {
-            this._pill.remove_style_class_name('wsm-offline');
+            this._pill.remove_style_class_name('sg-offline');
             for (const key of PANEL_FIELDS)
                 this._setField(key, key === 'cpu' ? '·  ·  ·' : '', '');
             return;
         }
 
         if (data.ok === false) {
-            this._pill.add_style_class_name('wsm-offline');
+            this._pill.add_style_class_name('sg-offline');
             const word = data.unconfigured ? 'set up' : 'offline';
             for (const key of PANEL_FIELDS)
                 this._setField(key, key === 'cpu' ? word : '', '');
             return;
         }
 
-        this._pill.remove_style_class_name('wsm-offline');
+        this._pill.remove_style_class_name('sg-offline');
         this._setField('cpu', pct(data.cpu?.percent), severity(data.cpu?.percent));
         this._setField('aux', data.aux ?? '', data.auxSeverity ?? '');
         this._setField('ram', pct(data.mem?.percent), severity(data.mem?.percent));
@@ -606,9 +606,9 @@ class WorkstationIndicator extends PanelMenu.Button {
     }
 });
 
-export default class WorkstationMonitorExtension extends Extension {
+export default class SpyglassExtension extends Extension {
     enable() {
-        this._indicator = new WorkstationIndicator(this);
+        this._indicator = new SpyglassIndicator(this);
         // Index 1 keeps it left of the system status area rather than fighting
         // it for the same slot.
         Main.panel.addToStatusArea(this.uuid, this._indicator, 1, 'right');

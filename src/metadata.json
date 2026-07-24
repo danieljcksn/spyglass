@@ -1,8 +1,12 @@
 {
-  "uuid": "workstation-monitor@dan",
-  "name": "Workstation Monitor",
-  "description": "One panel button showing CPU / RAM / disk vitals. Click it to toggle between this machine and the workstation (read over the Glances REST API). The two sources are deliberately styled differently so you always know which one you are looking at.",
-  "shell-version": ["45", "46", "47"],
-  "settings-schema": "org.gnome.shell.extensions.workstation-monitor",
+  "uuid": "spyglass@dan",
+  "name": "Spyglass",
+  "description": "One panel button showing CPU, memory, disk, GPU and network. Click it to toggle between this machine and a remote one read over the Glances API. The two sources are styled apart on purpose, so you always know which you are looking at.",
+  "shell-version": [
+    "45",
+    "46",
+    "47"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.spyglass",
   "version-name": "1.0"
 }

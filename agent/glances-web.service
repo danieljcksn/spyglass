@@ -1,5 +1,5 @@
 [Unit]
-Description=Glances web/API agent (workstation vitals)
+Description=Glances agent for Spyglass
 After=network-online.target
 Wants=network-online.target
 

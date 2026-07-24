@@ -1,7 +1,7 @@
-UUID    := workstation-monitor@dan
+UUID    := spyglass@dan
 SRC     := src
 DEST    := $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
-SCHEMA  := org.gnome.shell.extensions.workstation-monitor.gschema.xml
+SCHEMA  := org.gnome.shell.extensions.spyglass.gschema.xml
 
 .PHONY: help install uninstall schemas test test-lib test-draw pack lint clean
 
@@ -32,9 +32,9 @@ uninstall:
 # Both suites run under plain gjs, with no gnome-shell involved. test-lib hits
 # /proc, /sys and nvidia-smi for real; pass a Glances base URL to also exercise
 # the remote client against a live agent:
-#   make test-lib WSM_TEST_HOST=http://192.168.0.81:61208/api/4
+#   make test-lib SPYGLASS_TEST_HOST=http://192.168.0.81:61208/api/4
 test-lib:
-	@cd tests && WSM_TEST_HOST=$(WSM_TEST_HOST) gjs -m test-lib.js
+	@cd tests && SPYGLASS_TEST_HOST=$(SPYGLASS_TEST_HOST) gjs -m test-lib.js
 
 test-draw:
 	@mkdir -p build

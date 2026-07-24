@@ -1,4 +1,4 @@
-/* Workstation Monitor
+/* Spyglass
  *
  * ── the system ───────────────────────────────────────────────────────────────
  *
@@ -39,7 +39,7 @@
  * scale rather than borrowing the menu's.
  */
 
-.wsm-pill {
+.sg-pill {
     spacing: 6px;
     padding: 1px 8px;
     border-radius: 7px;
@@ -48,16 +48,16 @@
     border: 1px solid transparent;
 }
 
-.wsm-icon {
+.sg-icon {
     icon-size: 13px;
 }
 
-.wsm-tag {
+.sg-tag {
     font-size: 0.78em;
     opacity: 0.62;
 }
 
-.wsm-metric {
+.sg-metric {
     /* The padded strings in lib.js plus a floor on width stop the button
      * twitching as figures gain and lose digits. Labels with no text are
      * hidden outright, so this never reserves space for a missing metric. */
@@ -66,26 +66,26 @@
     font-feature-settings: "tnum";
 }
 
-.wsm-local {
+.sg-local {
     color: inherit;
 }
 
-.wsm-remote {
+.sg-remote {
     color: #4c8dff;
     background-color: rgba(76, 141, 255, 0.10);
     border: 1px solid rgba(76, 141, 255, 0.26);
 }
 
-.wsm-remote .wsm-tag,
-.wsm-remote .wsm-icon {
+.sg-remote .sg-tag,
+.sg-remote .sg-icon {
     color: #4c8dff;
 }
 
-.wsm-remote .wsm-tag {
+.sg-remote .sg-tag {
     opacity: 0.85;
 }
 
-.wsm-offline {
+.sg-offline {
     background-color: transparent;
     border: 1px solid rgba(128, 128, 128, 0.28);
     opacity: 0.5;
@@ -93,17 +93,17 @@
 
 /* ── severity ────────────────────────────────────────────────────────────── */
 
-.wsm-warn {
+.sg-warn {
     color: #e0a03a;
 }
 
-.wsm-crit {
+.sg-crit {
     color: #ef4d52;
 }
 
 /* ── menu shell ──────────────────────────────────────────────────────────── */
 
-.wsm-menu-section {
+.sg-menu-section {
     padding: 0;
 }
 
@@ -111,35 +111,35 @@
  * carry its default indent. Pulled onto the same 16px gutter as the readout
  * above them, so every label in the menu shares one left edge and the
  * separator spans exactly the width of the hairlines. */
-.wsm-menu .popup-menu-item,
-.wsm-menu .popup-separator-menu-item {
+.sg-menu .popup-menu-item,
+.sg-menu .popup-separator-menu-item {
     padding-left: 16px;
     padding-right: 16px;
 }
 
-.wsm-body {
+.sg-body {
     /* 16px gutters match the 16px block rhythm, so the horizontal and vertical
      * grids are the same grid. */
     padding: 4px 16px 8px 16px;
     min-width: 268px;
 }
 
-.wsm-header {
+.sg-header {
     padding: 4px 0 12px 0;
 }
 
-.wsm-host {
+.sg-host {
     font-size: 1.15em;
     font-weight: 600;
 }
 
-.wsm-hostsub {
+.sg-hostsub {
     font-size: 0.74em;
     opacity: 0.45;
     padding-top: 4px;
 }
 
-.wsm-chip {
+.sg-chip {
     font-size: 0.74em;
     padding: 2px 8px;
     border-radius: 999px;
@@ -148,17 +148,17 @@
     margin-top: 2px;
 }
 
-.wsm-chip-remote {
+.sg-chip-remote {
     color: #4c8dff;
     background-color: rgba(76, 141, 255, 0.12);
 }
 
-.wsm-chip-local {
+.sg-chip-local {
     opacity: 0.4;
     background-color: rgba(128, 128, 128, 0.13);
 }
 
-.wsm-hairline {
+.sg-hairline {
     height: 1px;
     background-color: rgba(128, 128, 128, 0.16);
     margin: 8px 0 8px 0;
@@ -166,27 +166,27 @@
 
 /* ── stat block ──────────────────────────────────────────────────────────── */
 
-.wsm-block {
+.sg-block {
     /* 8 + 8 between neighbours = the 16px block rhythm. */
     padding: 8px 0 8px 0;
 }
 
-.wsm-block-head {
+.sg-block-head {
     padding-bottom: 8px;
 }
 
-.wsm-block-name {
+.sg-block-name {
     font-size: 0.8em;
     opacity: 0.5;
 }
 
-.wsm-figure-value {
+.sg-figure-value {
     font-size: 1.0em;
     font-weight: 600;
     font-feature-settings: "tnum";
 }
 
-.wsm-figure-unit {
+.sg-figure-unit {
     font-size: 0.74em;
     opacity: 0.45;
     margin-left: 4px;
@@ -194,43 +194,43 @@
 }
 
 /* A percent sign is part of the number, not a word after it. */
-.wsm-figure-unit-tight {
+.sg-figure-unit-tight {
     margin-left: 1px;
 }
 
-.wsm-spark {
+.sg-spark {
     /* 4px: the graph and the meter below it are one object, read together. */
     margin-bottom: 4px;
 }
 
-.wsm-bar-track {
+.sg-bar-track {
     height: 3px;
     border-radius: 2px;
     background-color: rgba(128, 128, 128, 0.18);
 }
 
-.wsm-bar-fill {
+.sg-bar-fill {
     height: 3px;
     border-radius: 2px;
     background-color: #4c8dff;
 }
 
-.wsm-bar-fill.wsm-warn {
+.sg-bar-fill.sg-warn {
     background-color: #e0a03a;
 }
 
-.wsm-bar-fill.wsm-crit {
+.sg-bar-fill.sg-crit {
     background-color: #ef4d52;
 }
 
-.wsm-block-detail {
+.sg-block-detail {
     font-size: 0.8em;
     opacity: 0.55;
     padding-top: 8px;
     font-feature-settings: "tnum";
 }
 
-.wsm-block-sub {
+.sg-block-sub {
     font-size: 0.74em;
     opacity: 0.38;
     padding-top: 4px;
@@ -239,16 +239,16 @@
 
 /* ── key/value rows ──────────────────────────────────────────────────────── */
 
-.wsm-kv {
+.sg-kv {
     padding: 4px 0 4px 0;
 }
 
-.wsm-kv-key {
+.sg-kv-key {
     font-size: 0.8em;
     opacity: 0.5;
 }
 
-.wsm-kv-val {
+.sg-kv-val {
     font-size: 0.8em;
     font-feature-settings: "tnum";
 }
