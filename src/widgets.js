@@ -6,7 +6,7 @@
 //   · figures carry two weights, the number solid and its unit dimmed, so a
 //     row reads as one value rather than as a sentence
 //   · colour means something or is absent; nothing is tinted for decoration
-//   · every lane is exactly CONTENT_WIDTH, so edges align down the whole menu
+//   · lanes expand to the real content width, so edges align down the whole menu
 //   · nothing scales, slides or eases on interaction
 
 import GObject from 'gi://GObject';
@@ -15,10 +15,11 @@ import Clutter from 'gi://Clutter';
 
 import {drawSparkline} from './draw.js';
 
-// The single content width every block aligns to. Bars and sparklines are drawn
-// at exactly this width so their left and right edges line up down the whole
-// menu, which is most of what makes a stack of readouts look deliberate.
-export const CONTENT_WIDTH = 268;
+// The menu's width is not a constant. It is set by the widest thing in it,
+// usually the header subtitle carrying a distro string and a CPU model, and so
+// differs from machine to machine. Lanes therefore EXPAND to whatever that
+// turns out to be rather than being pinned to a guess: a meter that stops short
+// of the hairline above it is the single most visible way to look unfinished.
 const SPARK_HEIGHT = 20;
 const HISTORY = 60;
 
@@ -69,31 +70,42 @@ class Figure extends St.BoxLayout {
 // start, so the geometry is not a matter of alignment properties at all.
 export const Bar = GObject.registerClass(
 class Bar extends St.BoxLayout {
-    _init(width = CONTENT_WIDTH) {
-        super._init({style_class: 'sg-bar-track', x_align: Clutter.ActorAlign.START});
-        this._width = width;
-        this.set_style(`width: ${width}px;`);
+    _init() {
+        super._init({style_class: 'sg-bar-track', x_expand: true});
+        this._percent = 0;
         this._fill = new St.Widget({
             style_class: 'sg-bar-fill',
             x_align: Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.FILL,
         });
         this.add_child(this._fill);
+        // The track's own width is not known until it has been allocated, and
+        // it changes with the menu. Recompute the fill whenever it moves.
+        this.connect('notify::width', () => this._apply());
     }
 
     set(percent, severityClass = '') {
-        const clamped = Math.max(0, Math.min(100, percent ?? 0));
-        // A non-zero value must never round away to nothing, and a full one
-        // must not overshoot the track by a subpixel.
-        let px = Math.round((this._width * clamped) / 100);
-        if (clamped > 0)
-            px = Math.max(2, px);
-        this._fill.set_style(`width: ${px}px;`);
-        this._fill.visible = px > 0;
+        this._percent = Math.max(0, Math.min(100, percent ?? 0));
         for (const c of ['sg-warn', 'sg-crit'])
             this._fill.remove_style_class_name(c);
         if (severityClass)
             this._fill.add_style_class_name(severityClass);
+        this._apply();
+    }
+
+    _apply() {
+        const width = this.get_width();
+        if (!width)
+            return;
+        // A non-zero value must never round away to nothing, and a full one
+        // must not overshoot the track by a subpixel.
+        let px = Math.round((width * this._percent) / 100);
+        if (this._percent > 0)
+            px = Math.max(2, px);
+        // set_width, not a style: this runs on every allocation, and reparsing
+        // CSS to move a meter three pixels would be absurd.
+        this._fill.set_width(px);
+        this._fill.visible = px > 0;
     }
 });
 
@@ -104,11 +116,13 @@ class Bar extends St.BoxLayout {
 // climbing, and no single number can tell you which you are looking at.
 export const Sparkline = GObject.registerClass(
 class Sparkline extends St.DrawingArea {
-    _init(capacity = HISTORY, width = CONTENT_WIDTH, height = SPARK_HEIGHT) {
-        super._init({style_class: 'sg-spark'});
+    _init(capacity = HISTORY, height = SPARK_HEIGHT) {
+        super._init({style_class: 'sg-spark', x_expand: true});
         this._values = [];
         this._capacity = capacity;
-        this.set_style(`width: ${width}px; height: ${height}px;`);
+        // Height only. The width comes from the allocation, exactly as the
+        // meter below it does, so the two always share both edges.
+        this.set_style(`height: ${height}px;`);
     }
 
     push(value) {

@@ -187,20 +187,43 @@ export function readMem() {
     };
 }
 
+// One directory per process. ~350 entries here, read once per tick, which is
+// cheaper than it sounds and is the only honest way to get this number.
+export function countProcesses() {
+    try {
+        const en = Gio.File.new_for_path('/proc').enumerate_children(
+            'standard::name', Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+        let count = 0;
+        let info;
+        while ((info = en.next_file(null)) !== null) {
+            const c = info.get_name().charCodeAt(0);
+            if (c >= 48 && c <= 57)
+                count++;
+        }
+        en.close(null);
+        return count || null;
+    } catch (_e) {
+        return null;
+    }
+}
+
 export function readLoad() {
     const text = readFile('/proc/loadavg');
     if (!text)
         return null;
     const p = text.trim().split(/\s+/);
-    // 4th field is "running/total", which is a far cheaper process count than
-    // walking every numeric directory in /proc on each tick.
-    const procs = (p[3] ?? '').split('/');
+    // 4th field is "runnable/total". On a modern kernel that total counts
+    // TASKS, not processes: this machine reports 905 there while /proc holds
+    // 352 process directories. Reporting it as a process count overstates by
+    // roughly threefold, so it is used as the thread count and the processes
+    // are counted properly.
+    const tasks = (p[3] ?? '').split('/');
     return {
         load: {min1: parseFloat(p[0]), min5: parseFloat(p[1]), min15: parseFloat(p[2])},
         procs: {
-            running: parseInt(procs[0], 10) || null,
-            total: parseInt(procs[1], 10) || null,
-            threads: null,
+            running: parseInt(tasks[0], 10) || null,
+            total: countProcesses(),
+            threads: parseInt(tasks[1], 10) || null,
         },
     };
 }

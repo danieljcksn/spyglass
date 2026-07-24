@@ -29,8 +29,10 @@
  *
  * MOTION. None. No scale on press, no easing on hover.
  *
- * ALIGNMENT. Every lane is 268px, set from widgets.js. Bars and sparklines
- * share one left edge and one right edge down the entire menu.
+ * ALIGNMENT. Lanes expand to the real content width, which is set by the
+ * widest thing in the menu and so differs per machine. Bars and sparklines
+ * share one left edge and one right edge with each other and with the
+ * hairlines, down the entire menu.
  */
 
 /* ── panel button ────────────────────────────────────────────────────────────
@@ -115,6 +117,14 @@
 .sg-menu .popup-separator-menu-item {
     padding-left: 16px;
     padding-right: 16px;
+}
+
+/* Size matters as much as indent here: at gnome-shell's default 1em these two
+ * labels were a fifth step outside the scale and visually outweighed the data
+ * they sit beneath. The generous vertical padding is left alone, so the click
+ * target does not shrink along with the text. */
+.sg-menu .popup-menu-item {
+    font-size: 0.8em;
 }
 
 .sg-body {

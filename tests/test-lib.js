@@ -16,7 +16,8 @@ import {
     buildLocalData, buildRemoteData, cleanCpuModel, fetchRemoteData,
     defaultInterface, fmtBytes, fmtRate, fmtRateShort, fmtUptime,
     parseGlancesUptime, pct, readCpuTimes, readLocalGpu, readLocalStatic,
-    readDisk, readLoad, readMem, readNetCounters, readTemp, readUptime, severity,
+    countProcesses, readDisk, readLoad, readMem, readNetCounters, readTemp,
+    readUptime, severity,
 } from '../src/lib.js';
 
 // The live half is opt-in: it needs a Glances agent, which a fresh clone has no
@@ -97,6 +98,14 @@ check('readDisk used+free == total', disk
 const loadInfo = readLoad();
 check('readLoad min1 numeric', typeof loadInfo?.load.min1 === 'number');
 check('readLoad process total', loadInfo?.procs.total > 10, `${loadInfo?.procs.total}`);
+check('readLoad thread count', loadInfo?.procs.threads > 10, `${loadInfo?.procs.threads}`);
+// The whole point of counting /proc rather than trusting loadavg's 4th field:
+// that field counts tasks, so threads must exceed processes on any real system.
+check('threads exceed processes', loadInfo.procs.threads > loadInfo.procs.total,
+    `${loadInfo.procs.total} procs < ${loadInfo.procs.threads} threads`);
+check('countProcesses agrees with readLoad',
+    Math.abs(countProcesses() - loadInfo.procs.total) <= 5,
+    `${countProcesses()} vs ${loadInfo.procs.total}`);
 
 check('readUptime positive', readUptime() > 0, `${fmtUptime(readUptime())}`);
 check('readTemp finds coretemp', readTemp() > 10 && readTemp() < 120, `${readTemp()} C`);
