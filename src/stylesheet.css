@@ -1,0 +1,254 @@
+/* Workstation Monitor
+ *
+ * ── the system ───────────────────────────────────────────────────────────────
+ *
+ * TYPE. Four steps, no others. Every size below is one of these:
+ *
+ *   1.15em / 600   host name            the only thing at this size
+ *   1.00em / 600   headline figure      the number you came here to read
+ *   0.80em / 400   names, values, detail
+ *   0.74em / 400   qualifiers: units, subtitles, chips
+ *
+ * Weight carries hierarchy alongside size: 600 for the two things that matter,
+ * 400 for everything else. Emphasis never comes from colour.
+ *
+ * SPACE. A 4px grid. Every padding and margin is 4, 8, 12 or 16, and the
+ * rhythm encodes grouping, tightest to loosest:
+ *
+ *    4px   parts of one figure          spark → bar, detail → sub
+ *    8px   parts of one block           name → spark, bar → detail
+ *   16px   block → block                8 bottom + 8 top
+ *   32px   group → group                8 + hairline(8/8) + 8
+ *
+ * That doubling is the whole layout. Anything that belongs together is exactly
+ * half as far apart as the thing that separates it.
+ *
+ * COLOUR. Blue marks the remote source and fills meters; amber and red mean
+ * warn and critical. Nothing else is ever tinted. Dimming uses opacity, not a
+ * light-on-dark colour, so the sheet survives a light theme unchanged.
+ *
+ * MOTION. None. No scale on press, no easing on hover.
+ *
+ * ALIGNMENT. Every lane is 268px, set from widgets.js. Bars and sparklines
+ * share one left edge and one right edge down the entire menu.
+ */
+
+/* ── panel button ────────────────────────────────────────────────────────────
+ *
+ * The panel is its own context with its own optical size, so it runs a two-step
+ * scale rather than borrowing the menu's.
+ */
+
+.wsm-pill {
+    spacing: 6px;
+    padding: 1px 8px;
+    border-radius: 7px;
+    /* Present but undrawn on the local source, so both pills occupy identical
+     * space and the panel never reflows when you toggle between them. */
+    border: 1px solid transparent;
+}
+
+.wsm-icon {
+    icon-size: 13px;
+}
+
+.wsm-tag {
+    font-size: 0.78em;
+    opacity: 0.62;
+}
+
+.wsm-metric {
+    /* The padded strings in lib.js plus a floor on width stop the button
+     * twitching as figures gain and lose digits. Labels with no text are
+     * hidden outright, so this never reserves space for a missing metric. */
+    min-width: 30px;
+    font-size: 0.9em;
+    font-feature-settings: "tnum";
+}
+
+.wsm-local {
+    color: inherit;
+}
+
+.wsm-remote {
+    color: #4c8dff;
+    background-color: rgba(76, 141, 255, 0.10);
+    border: 1px solid rgba(76, 141, 255, 0.26);
+}
+
+.wsm-remote .wsm-tag,
+.wsm-remote .wsm-icon {
+    color: #4c8dff;
+}
+
+.wsm-remote .wsm-tag {
+    opacity: 0.85;
+}
+
+.wsm-offline {
+    background-color: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.28);
+    opacity: 0.5;
+}
+
+/* ── severity ────────────────────────────────────────────────────────────── */
+
+.wsm-warn {
+    color: #e0a03a;
+}
+
+.wsm-crit {
+    color: #ef4d52;
+}
+
+/* ── menu shell ──────────────────────────────────────────────────────────── */
+
+.wsm-menu-section {
+    padding: 0;
+}
+
+/* The action items at the foot of the menu are gnome-shell's own widgets and
+ * carry its default indent. Pulled onto the same 16px gutter as the readout
+ * above them, so every label in the menu shares one left edge and the
+ * separator spans exactly the width of the hairlines. */
+.wsm-menu .popup-menu-item,
+.wsm-menu .popup-separator-menu-item {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.wsm-body {
+    /* 16px gutters match the 16px block rhythm, so the horizontal and vertical
+     * grids are the same grid. */
+    padding: 4px 16px 8px 16px;
+    min-width: 268px;
+}
+
+.wsm-header {
+    padding: 4px 0 12px 0;
+}
+
+.wsm-host {
+    font-size: 1.15em;
+    font-weight: 600;
+}
+
+.wsm-hostsub {
+    font-size: 0.74em;
+    opacity: 0.45;
+    padding-top: 4px;
+}
+
+.wsm-chip {
+    font-size: 0.74em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    /* Nudged down to sit on the hostname's optical centre rather than its box
+     * centre, which caps taller than the lowercase it sits beside. */
+    margin-top: 2px;
+}
+
+.wsm-chip-remote {
+    color: #4c8dff;
+    background-color: rgba(76, 141, 255, 0.12);
+}
+
+.wsm-chip-local {
+    opacity: 0.4;
+    background-color: rgba(128, 128, 128, 0.13);
+}
+
+.wsm-hairline {
+    height: 1px;
+    background-color: rgba(128, 128, 128, 0.16);
+    margin: 8px 0 8px 0;
+}
+
+/* ── stat block ──────────────────────────────────────────────────────────── */
+
+.wsm-block {
+    /* 8 + 8 between neighbours = the 16px block rhythm. */
+    padding: 8px 0 8px 0;
+}
+
+.wsm-block-head {
+    padding-bottom: 8px;
+}
+
+.wsm-block-name {
+    font-size: 0.8em;
+    opacity: 0.5;
+}
+
+.wsm-figure-value {
+    font-size: 1.0em;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+}
+
+.wsm-figure-unit {
+    font-size: 0.74em;
+    opacity: 0.45;
+    margin-left: 4px;
+    font-feature-settings: "tnum";
+}
+
+/* A percent sign is part of the number, not a word after it. */
+.wsm-figure-unit-tight {
+    margin-left: 1px;
+}
+
+.wsm-spark {
+    /* 4px: the graph and the meter below it are one object, read together. */
+    margin-bottom: 4px;
+}
+
+.wsm-bar-track {
+    height: 3px;
+    border-radius: 2px;
+    background-color: rgba(128, 128, 128, 0.18);
+}
+
+.wsm-bar-fill {
+    height: 3px;
+    border-radius: 2px;
+    background-color: #4c8dff;
+}
+
+.wsm-bar-fill.wsm-warn {
+    background-color: #e0a03a;
+}
+
+.wsm-bar-fill.wsm-crit {
+    background-color: #ef4d52;
+}
+
+.wsm-block-detail {
+    font-size: 0.8em;
+    opacity: 0.55;
+    padding-top: 8px;
+    font-feature-settings: "tnum";
+}
+
+.wsm-block-sub {
+    font-size: 0.74em;
+    opacity: 0.38;
+    padding-top: 4px;
+    font-feature-settings: "tnum";
+}
+
+/* ── key/value rows ──────────────────────────────────────────────────────── */
+
+.wsm-kv {
+    padding: 4px 0 4px 0;
+}
+
+.wsm-kv-key {
+    font-size: 0.8em;
+    opacity: 0.5;
+}
+
+.wsm-kv-val {
+    font-size: 0.8em;
+    font-feature-settings: "tnum";
+}
