@@ -1,0 +1,8 @@
+{
+  "uuid": "workstation-monitor@dan",
+  "name": "Workstation Monitor",
+  "description": "One panel button showing CPU / RAM / disk vitals. Click it to toggle between this machine and the workstation (read over the Glances REST API). The two sources are deliberately styled differently so you always know which one you are looking at.",
+  "shell-version": ["45", "46", "47"],
+  "settings-schema": "org.gnome.shell.extensions.workstation-monitor",
+  "version-name": "1.0"
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.workstation-monitor"
+          path="/org/gnome/shell/extensions/workstation-monitor/">
+
+    <key name="source" type="s">
+      <default>'local'</default>
+      <summary>Active source</summary>
+      <description>Which machine the panel button is currently showing: 'local' or 'remote'. Persisted so the choice survives a Shell restart.</description>
+    </key>
+
+    <key name="remote-host" type="s">
+      <default>''</default>
+      <summary>Remote address</summary>
+      <description>Host or IP running the Glances web/API agent. Empty until configured, in which case the remote source reports itself as unconfigured rather than failing to connect.</description>
+    </key>
+
+    <key name="remote-port" type="i">
+      <range min="1" max="65535"/>
+      <default>61208</default>
+      <summary>Glances API port</summary>
+    </key>
+
+    <key name="remote-label" type="s">
+      <default>'remote'</default>
+      <summary>Short name shown in the panel for the remote source</summary>
+    </key>
+
+    <key name="poll-seconds" type="i">
+      <range min="1" max="60"/>
+      <default>3</default>
+      <summary>Seconds between samples</summary>
+      <description>Only the active source is polled, so switching sources does not double the work.</description>
+    </key>
+
+    <key name="panel-show-cpu" type="b">
+      <default>true</default>
+      <summary>Show processor in the panel</summary>
+    </key>
+
+    <key name="panel-show-aux" type="b">
+      <default>true</default>
+      <summary>Show temperature, or io/steal on a VM, in the panel</summary>
+    </key>
+
+    <key name="panel-show-ram" type="b">
+      <default>true</default>
+      <summary>Show memory in the panel</summary>
+    </key>
+
+    <key name="panel-show-disk" type="b">
+      <default>true</default>
+      <summary>Show disk in the panel</summary>
+    </key>
+
+    <key name="panel-show-gpu" type="b">
+      <default>true</default>
+      <summary>Show graphics in the panel</summary>
+      <description>Local source only, and only when a GPU is actually detected.</description>
+    </key>
+
+    <key name="panel-show-net" type="b">
+      <default>false</default>
+      <summary>Show network throughput in the panel</summary>
+    </key>
+
+  </schema>
+</schemalist>
