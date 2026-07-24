@@ -1,5 +1,7 @@
 # Spyglass
 
+![Spyglass](docs/spyglass-thumb.jpg)
+
 A GNOME Shell panel indicator that shows CPU, memory, disk, GPU and network for
 **this** machine, and switches to a **remote** machine on a click.
 
@@ -8,10 +10,11 @@ they run on. This one is for the case where the machine you care about is not
 the machine in front of you: a workstation under the desk, a build box, a VM on
 the LAN. Click the indicator and the whole readout swaps over.
 
-```
-  ⌂ kruskal   8%  73°  60%  93%          ← local, read from /proc and /sys
-  ▤ work     23%  0·0  49%  72%          ← remote, read over the Glances API
-```
+<p align="center"><img src="docs/panel.png" alt="The panel indicator" width="284"></p>
+
+One button, everything at a glance: hostname, processor, temperature, memory and
+disk, with graphics when there is a GPU to report. Figures cross into amber and
+red on their own, so a machine in trouble says so without being opened.
 
 The two sources never look alike. The remote one carries a server glyph, its
 hostname, an accent-tinted pill and a hairline border, because a number without
@@ -21,6 +24,11 @@ provenance is worse than no number.
 
 Left click toggles the source. Right click opens the full readout: history,
 meters, and the absolute figures behind every percentage.
+
+<p align="center"><img src="docs/menu-local.png" alt="The full readout" width="432"></p>
+
+Every percentage carries the real figure behind it. `103.5 GiB of 116.8 GiB` is
+a fact you can act on; `89%` alone is a mood.
 
 The menu groups metrics by how they *behave*, not by what they are. Things that
 move second to second (processor, memory, graphics) carry a sparkline. Things
